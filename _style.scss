@@ -1,0 +1,16 @@
+body {
+  background-color: rgb(16, 16, 27);
+  color: azure;
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  align-items: center;
+
+  h1 {
+    color: rgb(172, 96, 243);
+  }
+
+  #gameCanvas {
+    display: block;
+  }
+}
