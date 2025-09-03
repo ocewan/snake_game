@@ -68,7 +68,39 @@ function frame(timestamp) {
   ctx.clearRect(0, 0, canva.width, canva.height);
   ctx.fillStyle = "#15193a";
   ctx.fillRect(0, 0, canva.width, canva.height);
-  snake.forEach((cell) => drawCell(cell.col, cell.row));
+  snake.forEach((cell, i) => {
+    // get the neighbors
+    const prev = snake[i - 1];
+    const next = snake[i + 1];
+    // margin on every side
+    let marginTop = 3,
+      marginBottom = 3,
+      marginLeft = 3,
+      marginRight = 3;
+    // if a neighbor touches this side, remove the margin
+    if (prev) {
+      if (prev.col === cell.col && prev.row === cell.row - 1) marginTop = 0;
+      if (prev.col === cell.col && prev.row === cell.row + 1) marginBottom = 0;
+      if (prev.row === cell.row && prev.col === cell.col - 1) marginLeft = 0;
+      if (prev.row === cell.row && prev.col === cell.col + 1) marginRight = 0;
+    }
+    if (next) {
+      if (next.col === cell.col && next.row === cell.row - 1) marginTop = 0;
+      if (next.col === cell.col && next.row === cell.row + 1) marginBottom = 0;
+      if (next.row === cell.row && next.col === cell.col - 1) marginLeft = 0;
+      if (next.row === cell.row && next.col === cell.col + 1) marginRight = 0;
+    }
+    drawCell(
+      cell.col,
+      cell.row,
+      undefined,
+      false,
+      marginTop,
+      marginBottom,
+      marginLeft,
+      marginRight
+    );
+  });
 
   // show the score
   const scoreText = `score : ${score}`;
@@ -80,7 +112,7 @@ function frame(timestamp) {
   if (!food) {
     spawnFood();
   } else {
-    drawCell(food.col, food.row, food.color);
+    drawCell(food.col, food.row, food.color, true);
   }
 
   if (!running) {
@@ -107,11 +139,25 @@ function frame(timestamp) {
 requestAnimationFrame(frame);
 
 // draw each cell of the snake
-function drawCell(col, row, color = "#1ddd2dff") {
-  const x_px = col * caseSize;
-  const y_px = row * caseSize;
+function drawCell(
+  col,
+  row,
+  color = "#1ddd2dff",
+  isFood = false,
+  marginTop = 3,
+  marginBottom = 3,
+  marginLeft = 3,
+  marginRight = 3
+) {
+  if (isFood) {
+    marginTop = marginBottom = marginLeft = marginRight = 0;
+  }
+  const x_px = col * caseSize + marginLeft;
+  const y_px = row * caseSize + marginTop;
+  const sizeX = caseSize - marginLeft - marginRight;
+  const sizeY = caseSize - marginTop - marginBottom;
   ctx.fillStyle = color;
-  ctx.fillRect(x_px, y_px, caseSize, caseSize);
+  ctx.fillRect(x_px, y_px, sizeX, sizeY);
 }
 
 // update the game state
