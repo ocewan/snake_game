@@ -9,7 +9,7 @@ const snake = [
   { col: 2, row: 2 },
 ];
 const dir = { dx: 1, dy: 0 };
-const stepDelay = 200;
+let stepDelay = 200;
 let lastStepTime = 0;
 let pendingDir = null;
 let food = null;
@@ -188,7 +188,8 @@ function tick() {
   // check for food collision
   if (eaten) {
     food = null;
-    score += 1;
+    score += 1; // increase score
+    stepDelay *= 0.9; // increase speed
   } else {
     snake.pop();
   }
