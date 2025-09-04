@@ -69,8 +69,13 @@ imgBody.src = "./img/body2.png";
 const imgCorner = new Image();
 imgCorner.src = "./img/corner.png";
 
-// draw a part of the snake with rotation
-function drawSnakePart(img, col, row, angle = 0) {
+const foodImages = [new Image(), new Image(), new Image()];
+foodImages[0].src = "./img/pizza.png";
+foodImages[1].src = "./img/burger.png";
+foodImages[2].src = "./img/hotdog.png";
+
+// Fusionne les deux fonctions en une seule :
+function drawPart(img, col, row, angle = 0) {
   ctx.save();
   ctx.translate(col * caseSize + caseSize / 2, row * caseSize + caseSize / 2);
   ctx.rotate(angle);
@@ -161,7 +166,7 @@ function frame(timestamp) {
         }
       }
     }
-    drawSnakePart(img, cell.col, cell.row, angle);
+    drawPart(img, cell.col, cell.row, angle);
   });
 
   // show the score
@@ -173,8 +178,8 @@ function frame(timestamp) {
   // draw the food
   if (!food) {
     spawnFood();
-  } else {
-    drawCell(food.col, food.row, food.color, true);
+  } else if (food && food.img) {
+    drawPart(food.img, food.col, food.row);
   }
 
   // if the game is over, display a message
@@ -282,11 +287,7 @@ function spawnFood() {
     newFood = {
       col: Math.floor(Math.random() * grid),
       row: Math.floor(Math.random() * grid),
-      color:
-        "#" +
-        Math.floor(Math.random() * 16777215)
-          .toString(16)
-          .padStart(6, "0"),
+      img: foodImages[Math.floor(Math.random() * foodImages.length)],
     };
   } while (
     snake.some((cell) => cell.col === newFood.col && cell.row === newFood.row)
