@@ -1,6 +1,6 @@
 const canva = document.getElementById("gameCanvas");
 const ctx = canva.getContext("2d");
-const grid = 20;
+const grid = 25;
 const caseSize = canva.width / grid;
 const snake = [
   { col: 2, row: 5 },
@@ -69,10 +69,20 @@ imgBody.src = "./img/body2.png";
 const imgCorner = new Image();
 imgCorner.src = "./img/corner.png";
 
-const foodImages = [new Image(), new Image(), new Image()];
+const foodImages = [
+  new Image(),
+  new Image(),
+  new Image(),
+  new Image(),
+  new Image(),
+  new Image(),
+];
 foodImages[0].src = "./img/pizza.png";
 foodImages[1].src = "./img/burger.png";
 foodImages[2].src = "./img/hotdog.png";
+foodImages[3].src = "./img/rice.png";
+foodImages[4].src = "./img/grapes.png";
+foodImages[5].src = "./img/strawberry.png";
 
 // Fusionne les deux fonctions en une seule :
 function drawPart(img, col, row, angle = 0) {
@@ -206,28 +216,6 @@ function frame(timestamp) {
 // start the game loop
 requestAnimationFrame(frame);
 
-// draw each cell of the snake
-function drawCell(
-  col,
-  row,
-  color = "#1ddd2dff",
-  isFood = false,
-  marginTop = 3,
-  marginBottom = 3,
-  marginLeft = 3,
-  marginRight = 3
-) {
-  if (isFood) {
-    marginTop = marginBottom = marginLeft = marginRight = 0;
-  }
-  const x_px = col * caseSize + marginLeft;
-  const y_px = row * caseSize + marginTop;
-  const sizeX = caseSize - marginLeft - marginRight;
-  const sizeY = caseSize - marginTop - marginBottom;
-  ctx.fillStyle = color;
-  ctx.fillRect(x_px, y_px, sizeX, sizeY);
-}
-
 // update the game state
 function tick() {
   if (pendingDir) {
@@ -257,7 +245,7 @@ function tick() {
   if (eaten) {
     food = null;
     score += 1; // increase score
-    stepDelay *= 0.9; // increase speed
+    stepDelay *= 0.97; // increase speed
   } else {
     snake.pop();
   }
@@ -309,6 +297,7 @@ function reset() {
   pendingDir = null;
   food = null;
   score = 0;
+  stepDelay = 200;
   lastStepTime = 0;
   running = true;
 }
