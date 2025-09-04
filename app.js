@@ -59,47 +59,109 @@ document.addEventListener("keydown", (event) => {
   }
 });
 
+// charging snake images
+const imgHead = new Image();
+imgHead.src = "./img/head.png";
+const imgTail = new Image();
+imgTail.src = "./img/tail2.png";
+const imgBody = new Image();
+imgBody.src = "./img/body2.png";
+const imgCorner = new Image();
+imgCorner.src = "./img/corner.png";
+
+// draw a part of the snake with rotation
+function drawSnakePart(img, col, row, angle = 0) {
+  ctx.save();
+  ctx.translate(col * caseSize + caseSize / 2, row * caseSize + caseSize / 2);
+  ctx.rotate(angle);
+  ctx.drawImage(img, -caseSize / 2, -caseSize / 2, caseSize, caseSize);
+  ctx.restore();
+}
+
 // game loop
 function frame(timestamp) {
   if (running && timestamp - lastStepTime >= stepDelay) {
     lastStepTime = timestamp;
     tick();
   }
+  // clear the canvas
   ctx.clearRect(0, 0, canva.width, canva.height);
   ctx.fillStyle = "#15193a";
   ctx.fillRect(0, 0, canva.width, canva.height);
+
+  // draw the snake
   snake.forEach((cell, i) => {
-    // get the neighbors
-    const prev = snake[i - 1];
-    const next = snake[i + 1];
-    // margin on every side
-    let marginTop = 3,
-      marginBottom = 3,
-      marginLeft = 3,
-      marginRight = 3;
-    // if a neighbor touches this side, remove the margin
-    if (prev) {
-      if (prev.col === cell.col && prev.row === cell.row - 1) marginTop = 0;
-      if (prev.col === cell.col && prev.row === cell.row + 1) marginBottom = 0;
-      if (prev.row === cell.row && prev.col === cell.col - 1) marginLeft = 0;
-      if (prev.row === cell.row && prev.col === cell.col + 1) marginRight = 0;
+    let img = imgBody;
+    let angle = 0;
+    if (i === 0) {
+      // head
+      img = imgHead;
+      const next = snake[1];
+      if (next) {
+        if (next.col < cell.col) angle = -Math.PI / 2;
+        else if (next.col > cell.col) angle = Math.PI / 2;
+        else if (next.row < cell.row) angle = 0;
+        else if (next.row > cell.row) angle = Math.PI;
+      }
+    } else if (i === snake.length - 1) {
+      // tail
+      img = imgTail;
+      const prev = snake[i - 1];
+      if (prev) {
+        if (prev.col < cell.col) angle = -Math.PI / 2;
+        else if (prev.col > cell.col) angle = Math.PI / 2;
+        else if (prev.row < cell.row) angle = 0;
+        else if (prev.row > cell.row) angle = Math.PI;
+      }
+    } else {
+      // body
+      const prev = snake[i - 1];
+      const next = snake[i + 1];
+      if (prev && next) {
+        if (prev.col === next.col) {
+          img = imgBody;
+          if (prev.row < cell.row) angle = Math.PI;
+        } else if (prev.row === next.row) {
+          img = imgBody;
+          angle = Math.PI / 2;
+        } else {
+          // turns: detect the orientation and apply the correct image + angle
+          // Case 1
+          if (
+            (prev.row > cell.row && next.col < cell.col) ||
+            (next.row > cell.row && prev.col < cell.col)
+          ) {
+            img = imgCorner;
+            angle = 0;
+          }
+          // Case 2
+          else if (
+            (prev.row > cell.row && next.col > cell.col) ||
+            (next.row > cell.row && prev.col > cell.col)
+          ) {
+            img = imgCorner;
+            angle = -Math.PI / 2;
+          }
+          // Case 3
+          else if (
+            (prev.row < cell.row && next.col < cell.col) ||
+            (next.row < cell.row && prev.col < cell.col)
+          ) {
+            img = imgCorner;
+            angle = Math.PI / 2;
+          }
+          // Case 4
+          else if (
+            (prev.row < cell.row && next.col > cell.col) ||
+            (next.row < cell.row && prev.col > cell.col)
+          ) {
+            img = imgCorner;
+            angle = Math.PI;
+          }
+        }
+      }
     }
-    if (next) {
-      if (next.col === cell.col && next.row === cell.row - 1) marginTop = 0;
-      if (next.col === cell.col && next.row === cell.row + 1) marginBottom = 0;
-      if (next.row === cell.row && next.col === cell.col - 1) marginLeft = 0;
-      if (next.row === cell.row && next.col === cell.col + 1) marginRight = 0;
-    }
-    drawCell(
-      cell.col,
-      cell.row,
-      undefined,
-      false,
-      marginTop,
-      marginBottom,
-      marginLeft,
-      marginRight
-    );
+    drawSnakePart(img, cell.col, cell.row, angle);
   });
 
   // show the score
@@ -115,6 +177,7 @@ function frame(timestamp) {
     drawCell(food.col, food.row, food.color, true);
   }
 
+  // if the game is over, display a message
   if (!running) {
     ctx.save();
     ctx.fillStyle = "rgba(0,0,0,0.35)";
@@ -204,6 +267,7 @@ function isOpposite(a, b) {
   return false;
 }
 
+// check if the snake hits itself
 function hitItself(headNext, willGrow) {
   const body = willGrow ? snake : snake.slice(0, snake.length - 1);
   return body.some(
