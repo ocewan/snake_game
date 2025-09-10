@@ -5,12 +5,78 @@ body {
   justify-content: center;
   flex-direction: column;
   align-items: center;
+  font-family: "Montserrat, sans-serif", sans-serif;
 
-  h1 {
+  #playerForm {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 3rem 0;
+
+    label {
+      margin-bottom: 0.5rem;
+      font-size: 1.2rem;
+    }
+
+    input[type="text"] {
+      padding: 0.5rem;
+      font-size: 1rem;
+      border: none;
+      border-radius: 5px;
+      margin-bottom: 0.5rem;
+    }
+
+    button {
+      padding: 0.5rem 1rem;
+      font-size: 1rem;
+      border: none;
+      border-radius: 5px;
+      background-color: rgb(172, 96, 243);
+      color: white;
+      cursor: pointer;
+      transition: background-color 0.3s;
+
+      &:hover {
+        background-color: rgb(150, 80, 220);
+      }
+    }
+  }
+
+  h1,
+  h2 {
     color: rgb(172, 96, 243);
   }
 
   #gameCanvas {
     display: block;
+    width: 80vh;
+    height: 80vh;
+    max-width: 98vw;
+    max-height: 98vw;
+  }
+
+  #leaderboard {
+    margin: 3rem 0;
+    padding: 1rem;
+    border: 1px solid rgb(172, 96, 243);
+  }
+}
+
+@media (max-aspect-ratio: 1/1) {
+  body #gameCanvas {
+    width: 98vw;
+    height: 98vw;
+    max-width: 98vw;
+    max-height: 98vw;
+  }
+}
+@media (max-width: 600px) {
+  body #gameCanvas {
+    width: 98vw;
+    height: 98vw;
+  }
+
+  h1 {
+    font-size: 1.5rem;
   }
 }

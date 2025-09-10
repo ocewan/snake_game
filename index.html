@@ -1,14 +1,27 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Snake Game</title>
-    <link rel="stylesheet" href="./index.css">
+    <link rel="stylesheet" href="./index.css" />
 </head>
 <body>
     <h1>🐍Bienvenue sur le Snake Game🐍</h1>
+    <form id="playerForm">
+        <label for="playerName">Entrez votre nom :</label>
+        <input type="text" id="playerName" maxlength="20" required />
+        <button type="submit">Jouer</button>
+    </form>
+    <canvas
+    id="gameCanvas"
+    width="800"
+    height="800"
+    style="display: none"
+    ></canvas>
+    <div id="leaderboard"></div>
     <canvas id="gameCanvas" width="800" height="800"></canvas>
-    <script src="app.js"></script>
-</body>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+    <script src="./app.2025-09-05.js"></script>
+  </body>
 </html>
